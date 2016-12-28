@@ -1,5 +1,5 @@
 // © Chris K.
-// p5Drawing, BETA release 0.0.2, 12:41 Poland, Warsaw.
+// p5Drawing, BETA release 0.0.3, 21:28 Poland, Warsaw.
 
 // TODO: changing brush style, change the way of showing saves.
 // DONE FROM TODO: Show message while saving/showing/clearing,
