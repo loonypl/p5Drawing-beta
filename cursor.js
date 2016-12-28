@@ -1,3 +1,6 @@
+// Ⓒ Chris K.
+// p5Drawing, BETA release 0.0.2, 12:41 Poland, Warsaw.
+
 function Cursor() {
 
 	this.eraser = false;
