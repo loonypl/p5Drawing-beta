@@ -1,5 +1,5 @@
 // © Chris K.
-// p5Drawing, BETA release 0.0.2, 12:41 Poland, Warsaw.
+// p5Drawing, BETA release 0.0.3, 21:28 Poland, Warsaw.
 
 function Cursor() {
 
