@@ -1,3 +1,6 @@
+// Ⓒ Chris K.
+// p5Drawing, BETA release 0.0.2, 12:41 Poland, Warsaw.
+
 // TODO: changing brush style, changing brush color.
 // DONE FROM TODO: Show message while saving/showing/clearing,
 //				   changing brush weight, changing brush transparency,
