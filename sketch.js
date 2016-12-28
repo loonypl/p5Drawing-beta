@@ -1,10 +1,11 @@
-// Ⓒ Chris K.
+// © Chris K.
 // p5Drawing, BETA release 0.0.2, 12:41 Poland, Warsaw.
 
-// TODO: changing brush style, changing brush color.
+// TODO: changing brush style, change the way of showing saves.
 // DONE FROM TODO: Show message while saving/showing/clearing,
 //				   changing brush weight, changing brush transparency,
-//				   undo (in feature - add more moves to undo), earser.
+//				   undo (in feature - add more moves to undo), earser,
+//				   changing brush shape.
 
 // global vars
 var database;
@@ -27,6 +28,10 @@ var canvas;
 var keyinput;
 var brushslider;
 var transparencyinput;
+var colourinputR;
+var colourinputG;
+var colourinputB;
+var brushShapeSelect;
 
 function setup() {
 	initFireBase();
@@ -357,9 +362,9 @@ function setup() {
 		'margin-left: 5px'
 	]);
 
-	var colourText = createP('Brush transparency:');
-	colourText.parent(optionscontainer);
-	addStyles(colourText, [
+	var transparencyText = createP('Brush transparency:');
+	transparencyText.parent(optionscontainer);
+	addStyles(transparencyText, [
 		'display: inline-block',
 		'margin-right: 5px'
 	]);
@@ -374,6 +379,115 @@ function setup() {
 		'text-align: center'
 	]);
 
+	var border4 = createP('|');
+	border4.parent(optionscontainer);
+	addStyles(border4, [
+		'display: inline-block',
+		'margin-right: 10px',
+		'margin-left: 10px'
+	]);
+
+	var colourText = createP('Colour in RGB:');
+	colourText.parent(optionscontainer);
+	addStyles(colourText, [
+		'display: inline-block',
+		'margin-right: 5px'
+	]);
+
+	colourinputR = createInput('255');
+	colourinputR.parent(optionscontainer);
+	addStyles(colourinputR, [
+		'display: inline-block',
+		'border: 2px solid #404040',
+		'width: 35px',
+		'text-align: center',
+		'margin-right: 5px'
+	]);
+
+	colourinputG = createInput('255');
+	colourinputG.parent(optionscontainer);
+	addStyles(colourinputG, [
+		'display: inline-block',
+		'border: 2px solid #404040',
+		'width: 35px',
+		'text-align: center',
+		'margin-right: 5px'
+	]);
+
+	colourinputB = createInput('255');
+	colourinputB.parent(optionscontainer);
+	addStyles(colourinputB, [
+		'display: inline-block',
+		'border: 2px solid #404040',
+		'width: 35px',
+		'text-align: center'
+	]);
+
+	var border5 = createP('|');
+	border5.parent(optionscontainer);
+	addStyles(border5, [
+		'display: inline-block',
+		'margin-right: 10px',
+		'margin-left: 10px'
+	]);
+
+	var brushShapeText = createP('Brush shape:');
+	brushShapeText.parent(optionscontainer);
+	addStyles(brushShapeText, [
+		'display: inline-block',
+		'margin-right: 10px'
+	]);
+
+	brushShapeSelect = createSelect();
+	brushShapeSelect.parent(optionscontainer);
+	addStyles(brushShapeSelect, [
+		'border: 2px solid #404040'
+	]);
+	brushShapeSelect.option('Circle');
+	brushShapeSelect.option('Square');
+	brushShapeSelect.option('Triangle');
+	brushShapeSelect.changed(changeBrush);
+
+	cursor.setShape('Circle');
+
+	function changeBrush() {
+		cursor.setShape(brushShapeSelect.value());
+
+		if (messageapplet) messageapplet.remove();
+
+		createMessage("Brush shape: '" + brushShapeSelect.value() + "'");
+
+		function createMessage(msg) {
+			messageapplet = createElement('savemessage');
+			addStyles(messageapplet, [
+				'position: absolute',
+				'display: block',
+				'top: 0',
+				'left: 0',
+				'height: 50px',
+				'width: auto',
+				'background: #404040',
+				'border-left: 5px solid #404040',
+				'border-right: 5px solid #404040',
+				'text-align: center'
+			]);
+			var savedText = createP(msg);
+			addStyles(savedText, [
+				'display: block',
+				'margin-top: 15px',
+				'font-size: 16px',
+				'font-family: sans-serif',
+				'color: #FFFFFF'
+			]);
+			savedText.parent(messageapplet);
+			setTimeout(removeMessage, 10000);
+
+			function removeMessage() {
+				messageapplet.remove();
+			}
+		}
+	}
+
 }
 
 function draw() {
@@ -381,19 +495,18 @@ function draw() {
 	cursor.update();
 	if (drawPath == true) {
 		if (erase == false) {
-			paths.push({ x: mouseX, y: mouseY, weight: brushslider.value(), transparency: int(transparencyinput.value()) });
-			pathsUndo.push({ x: mouseX, y: mouseY, weight: brushslider.value(), transparency: int(transparencyinput.value()) });
+			paths.push({ x: mouseX, y: mouseY, weight: brushslider.value(), transparency: int(transparencyinput.value()), colour: (str(colourinputR.value()) + ', ' + str(colourinputG.value()) + ', ' + str(colourinputB.value())), shape: cursor.getShape() });
+			pathsUndo.push({ x: mouseX, y: mouseY, weight: brushslider.value(), transparency: int(transparencyinput.value()), colour: (str(colourinputR.value()) + ', ' + str(colourinputG.value()) + ', ' + str(colourinputB.value())), shape: cursor.getShape() });
 		} else {
 			for (var i = 0; i < paths.length; i++) {
 				if (p5.Vector.dist(createVector(paths[i].x, paths[i].y), createVector(mouseX, mouseY)) < (brushslider.value()/2)) {
 					paths.splice(i, 1);
-					print('yes');
 				}
 			}
 		}
 	}
 	for (var i = 0; i < paths.length; i++) {
-		new Path(paths[i].x, paths[i].y, paths[i].transparency, paths[i].weight).update();
+		new Path(paths[i].x, paths[i].y, paths[i].transparency, paths[i].weight, paths[i].colour, paths[i].shape).update();
 	}
 
 }
